@@ -1,12 +1,24 @@
-import React from "react";
-import { Htag, Tag, HhData } from "../../components";
+import React, { useReducer } from "react";
+import { Htag, Tag, HhData, Advantages, Sort } from "../../components";
 import { TopPageComponentProps } from "./TopPageComponent.props";
 import styles from './TopPageComponent.module.css';
 import { TopLevelCategory } from "../../interfaces/page.interface";
+import { SortEnum } from "../../components/Sort/Sort.props";
+import { sortReducer } from "./sort.reducer";
+
+
 
 
 
 export const TopPageComponent = ({ page, products, firstCategory }: TopPageComponentProps): JSX.Element => {
+
+    const [{ products: sortedProducts, sort }, dispathSort] = useReducer(sortReducer, { products, sort: SortEnum.Rating });
+
+
+    const setSort = (sort: SortEnum) => {
+        dispathSort({ type: sort });
+    };
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.title}>
@@ -14,11 +26,11 @@ export const TopPageComponent = ({ page, products, firstCategory }: TopPageCompo
 
                 {products && <Tag color="grey" size="m">{products.length}</Tag>}
 
-                <span>Сортировка</span>
+                <Sort sort={sort} setSort={setSort} />
             </div>
 
             <div>
-                {products && products.map(p => (
+                {sortedProducts && sortedProducts.map(p => (
                     <div key={p._id}>
                         {p.title}
                     </div>
@@ -31,7 +43,19 @@ export const TopPageComponent = ({ page, products, firstCategory }: TopPageCompo
                 <Tag color="red" size="m">hh.ru</Tag>
             </div>
 
-            {firstCategory == TopLevelCategory.Courses && <HhData {...page.hh} />}
+            {firstCategory == TopLevelCategory.Courses && page.hh && <HhData {...page.hh} />}
+            {page.advantages && page.advantages.length > 0 && <>
+                <Htag tag='h2'>Преимущества</Htag>
+                <Advantages advantages={page.advantages} />
+            </>}
+
+            {page.seoText && <div className={styles.seo} dangerouslySetInnerHTML={{ __html: page.seoText }} />}
+
+            <Htag tag='h2'>Получаемые навыки</Htag>
+
+            {page.tags.map(t => (
+                <Tag key={t} color='primary'>{t}</Tag>
+            ))}
 
         </div>
     );
