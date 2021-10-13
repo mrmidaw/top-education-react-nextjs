@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import { Htag, Tag, HhData, Advantages, Sort } from "../../components";
+import { Htag, Tag, HhData, Advantages, Sort, Product } from "../../components";
 import { TopPageComponentProps } from "./TopPageComponent.props";
 import styles from './TopPageComponent.module.css';
 import { TopLevelCategory } from "../../interfaces/page.interface";
@@ -31,9 +31,7 @@ export const TopPageComponent = ({ page, products, firstCategory }: TopPageCompo
 
             <div>
                 {sortedProducts && sortedProducts.map(p => (
-                    <div key={p._id}>
-                        {p.title}
-                    </div>
+                    <Product key={p._id} product={p} />
                 ))}
             </div>
 
