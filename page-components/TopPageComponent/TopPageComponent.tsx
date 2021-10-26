@@ -5,11 +5,14 @@ import styles from './TopPageComponent.module.css';
 import { TopLevelCategory } from "../../interfaces/page.interface";
 import { SortEnum } from "../../components/Sort/Sort.props";
 import { sortReducer } from "./sort.reducer";
-import { useScrollY } from "../../hooks/useScrollY";
+import { useReducedMotion } from "framer-motion";
+
 
 export const TopPageComponent = ({ page, products, firstCategory }: TopPageComponentProps): JSX.Element => {
 
     const [{ products: sortedProducts, sort }, dispathSort] = useReducer(sortReducer, { products, sort: SortEnum.Rating });
+
+    const shouldReduceMotion = useReducedMotion();
 
     const setSort = (sort: SortEnum) => {
         dispathSort({ type: sort });
@@ -25,14 +28,14 @@ export const TopPageComponent = ({ page, products, firstCategory }: TopPageCompo
             <div className={styles.title}>
                 <Htag tag="h1">{page.title}</Htag>
 
-                {products && <Tag color="grey" size="m">{products.length}</Tag>}
+                {products && <Tag color="grey" size="m" aria-label={products.length + 'элементов'}>{products.length}</Tag>}
 
                 <Sort sort={sort} setSort={setSort} />
             </div>
 
-            <div>
+            <div role='list'>
                 {sortedProducts && sortedProducts.map(p => (
-                    <Product layout key={p._id} product={p} />
+                    <Product role='listitem' layout={shouldReduceMotion ? false : true} key={p._id} product={p} />
                 ))}
             </div>
 
